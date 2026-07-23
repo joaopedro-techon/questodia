@@ -1,0 +1,8 @@
+# Fase 2 — proxy reverso com HTTPS automático (Let's Encrypt).
+# Troque "questodia.seu-dominio.com" pelo seu domínio real antes de usar.
+# O Caddy obtém e renova o certificado TLS sozinho e já trata WebSocket (Socket.IO).
+
+questodia.seu-dominio.com {
+    encode gzip
+    reverse_proxy questodia:3000
+}

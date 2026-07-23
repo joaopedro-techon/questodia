@@ -1,0 +1,39 @@
+# Fase 2 — app + Caddy (proxy reverso + HTTPS). Use no lugar do docker-compose.yml
+# quando já tiver o domínio apontando para o servidor:
+#   docker compose -f deploy/docker-compose.prod.yml up -d --build
+#
+# Aqui o Questódia NÃO publica a porta 3000 no host: só o Caddy fica exposto
+# (80/443) e faz o proxy para o container internamente.
+
+services:
+  questodia:
+    build: ..
+    image: questodia:latest
+    container_name: questodia
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - DB_PATH=/data/questodia.db
+    volumes:
+      - questodia-data:/data
+    expose:
+      - '3000'
+
+  caddy:
+    image: caddy:2
+    container_name: questodia-caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - questodia
+
+volumes:
+  questodia-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questódia — Jogar</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">
+          <div class="logo-mark">Q</div>
+          <h1>Quest<span>ó</span>dia</h1>
+        </div>
+        <div class="org">Itaú Unibanco</div>
+      </div>
+
+      <div class="topbar">
+        <button class="ghost small" onclick="window.location.href = '/'">← Voltar ao início</button>
+      </div>
+
+      <div id="alert"></div>
+
+      <!-- Entrar -->
+      <section id="join" class="card">
+        <h2>Entrar na partida</h2>
+        <label for="code">Código da sala</label>
+        <input id="code" type="text" placeholder="Ex.: AB12CD" maxlength="6" />
+        <label for="nickname">Seu apelido</label>
+        <input id="nickname" type="text" placeholder="Ex.: Ana" maxlength="20" />
+        <div class="row" style="margin-top: 16px">
+          <button id="joinBtn">Entrar</button>
+        </div>
+      </section>
+
+      <!-- Espera -->
+      <section id="wait" class="card hidden">
+        <h2>🎉 Você está dentro!</h2>
+        <p>Apelido: <strong id="waitNick"></strong></p>
+        <p class="muted">Aguarde o master iniciar a partida…</p>
+      </section>
+
+      <!-- Pergunta -->
+      <section id="play" class="card hidden">
+        <div class="row">
+          <span class="pill" id="playCounter"></span>
+          <div class="spacer"></div>
+          <span class="timer" id="playTimer"></span>
+        </div>
+        <div class="question-text" id="playQuestionText"></div>
+        <div class="options" id="playOptions"></div>
+        <p class="muted" id="answeredNote"></p>
+      </section>
+
+      <!-- Reveal -->
+      <section id="reveal" class="card hidden">
+        <div id="feedbackBox" class="feedback"></div>
+        <p style="text-align: center; margin-top: 16px">
+          Sua posição: <strong id="myRank"></strong> · Total: <strong id="myScore"></strong> pts
+        </p>
+        <h3>Ranking parcial</h3>
+        <ol class="rank-list" id="playRanking"></ol>
+      </section>
+
+      <!-- Pódio -->
+      <section id="podium" class="card hidden">
+        <h2 style="text-align: center">🏆 Pódio final</h2>
+        <div class="podium" id="podiumBox"></div>
+        <h3>Classificação completa</h3>
+        <ol class="rank-list" id="fullRanking"></ol>
+        <div class="row" style="margin-top: 16px">
+          <button onclick="window.location.href = '/'">Voltar ao início</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket-client.js"></script>
+    <script src="/js/play.js"></script>
+  </body>
+</html>

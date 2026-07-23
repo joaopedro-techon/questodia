@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questódia</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">
+          <div class="logo-mark">Q</div>
+          <h1>Quest<span>ó</span>dia</h1>
+        </div>
+        <p>Quiz gamificado ao vivo — responda rápido, suba no pódio!</p>
+        <div class="org">Itaú Unibanco</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h2>🎯 Entrar em uma partida</h2>
+          <p class="muted">Você é jogador? Entre com o código da sala e um apelido.</p>
+          <label for="joinCode">Código da sala</label>
+          <input id="joinCode" type="text" placeholder="Ex.: AB12CD" maxlength="6" />
+          <div class="row" style="margin-top: 16px">
+            <button id="goPlay">Entrar como jogador</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🧑‍🏫 Área do master</h2>
+          <p class="muted">Crie um novo quiz ou gerencie um já salvo pelo código de gestão.</p>
+          <div class="row" style="margin-top: 8px">
+            <button id="newQuiz">Criar novo quiz</button>
+            <button id="allQuizzes" class="secondary">📋 Ver todos os quizzes</button>
+          </div>
+          <label for="mgmtCode">Já tem um quiz? Código de gestão</label>
+          <input id="mgmtCode" type="text" placeholder="qz_..." />
+          <div class="row" style="margin-top: 12px">
+            <button id="manageQuiz" class="ghost">Gerenciar quiz</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('goPlay').addEventListener('click', () => {
+        const code = document.getElementById('joinCode').value.trim().toUpperCase();
+        window.location.href = code ? `/play.html?code=${encodeURIComponent(code)}` : '/play.html';
+      });
+      document.getElementById('newQuiz').addEventListener('click', () => {
+        window.location.href = '/host.html';
+      });
+      document.getElementById('allQuizzes').addEventListener('click', () => {
+        window.location.href = '/quizzes.html';
+      });
+      document.getElementById('manageQuiz').addEventListener('click', () => {
+        const code = document.getElementById('mgmtCode').value.trim();
+        if (code) {
+          window.location.href = `/host.html?code=${encodeURIComponent(code)}`;
+        }
+      });
+    </script>
+  </body>
+</html>

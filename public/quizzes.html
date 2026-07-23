@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questódia — Meus Quizzes</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">
+          <div class="logo-mark">Q</div>
+          <h1>Quest<span>ó</span>dia</h1>
+        </div>
+        <div class="org">Itaú Unibanco</div>
+      </div>
+
+      <div class="topbar">
+        <button class="ghost small" onclick="window.location.href = '/'">← Voltar ao início</button>
+        <div class="spacer"></div>
+        <button class="small" onclick="window.location.href = '/host.html'">+ Novo quiz</button>
+      </div>
+
+      <section class="card">
+        <h2>Meus quizzes</h2>
+        <p class="muted">
+          Todos os quizzes salvos. Use "Editar" para abrir pelo código de gestão (útil se você
+          perdeu o código) ou "Lançar" para iniciar uma partida ao vivo.
+        </p>
+        <div id="alert"></div>
+        <div id="list"></div>
+      </section>
+    </div>
+
+    <script src="/js/quizzes.js"></script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.env*
+
+# Banco de dados SQLite (estado local, não versionar)
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

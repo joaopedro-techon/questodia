@@ -1,0 +1,20 @@
+services:
+  questodia:
+    build: .
+    image: questodia:latest
+    container_name: questodia
+    restart: unless-stopped
+    ports:
+      # host:container — a porta do HOST é configurável (padrão 3100, já que 3000
+      # está em uso no servidor). Ex.: QUESTODIA_PORT=3200 docker compose up -d
+      # A porta interna do container continua 3000.
+      - '${QUESTODIA_PORT:-3100}:3000'
+    environment:
+      - PORT=3000
+      - DB_PATH=/data/questodia.db
+    volumes:
+      # Persiste o banco SQLite fora do container (os quizzes sobrevivem a atualizações).
+      - questodia-data:/data
+
+volumes:
+  questodia-data:

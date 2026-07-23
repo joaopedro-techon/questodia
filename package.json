@@ -1,0 +1,26 @@
+{
+  "name": "questodia",
+  "version": "1.0.0",
+  "description": "Questódia — plataforma de quiz gamificado ao vivo (estilo Kahoot)",
+  "type": "commonjs",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.21.0",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "socket.io-client": "^4.8.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,18 @@
+node_modules
+data
+.git
+.gitignore
+*.log
+npm-debug.log*
+
+# Artefatos de especificação e ferramentas do dev (não vão para a imagem)
+specs
+.claude
+.specify
+scripts
+
+# Configs de lint/format (não necessários em runtime)
+.eslintrc.json
+.eslintignore
+.prettierrc
+.prettierignore

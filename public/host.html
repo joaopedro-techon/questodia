@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Questódia — Master</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">
+          <div class="logo-mark">Q</div>
+          <h1>Quest<span>ó</span>dia</h1>
+        </div>
+        <div class="org">Itaú Unibanco</div>
+        <p class="muted">Área do master</p>
+      </div>
+
+      <div class="topbar">
+        <button class="ghost small" onclick="window.location.href = '/'">← Voltar ao início</button>
+        <button class="ghost small" onclick="window.location.href = '/quizzes.html'">
+          📋 Meus quizzes
+        </button>
+      </div>
+
+      <div id="alert"></div>
+
+      <!-- Montador de quiz -->
+      <section id="builder" class="card">
+        <h2 id="builderTitle">Criar quiz</h2>
+        <label for="quizTitle">Título do quiz</label>
+        <input id="quizTitle" type="text" placeholder="Ex.: Capitais do Mundo" />
+
+        <div id="questions"></div>
+
+        <div class="row" style="margin-top: 12px">
+          <button id="addQuestion" class="ghost">+ Adicionar pergunta</button>
+          <div class="spacer"></div>
+          <button id="saveQuiz">Salvar quiz</button>
+        </div>
+
+        <div id="savedInfo" class="hidden">
+          <div class="notice ok">
+            <p>Quiz salvo! Guarde o seu <strong>código de gestão</strong> para editar depois:</p>
+            <div class="code-badge" id="mgmtCodeShow"></div>
+            <p class="muted" id="manageLink"></p>
+          </div>
+          <div class="row">
+            <button id="launchGame">🚀 Lançar partida ao vivo</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lobby da partida -->
+      <section id="lobby" class="card hidden">
+        <h2 id="lobbyQuizTitle">Sala aberta</h2>
+        <div class="join-panel">
+          <div class="join-qr">
+            <p class="muted">Escaneie para entrar:</p>
+            <img id="qrImage" class="qr-image" alt="QR code para entrar na sala" />
+          </div>
+          <div class="join-code">
+            <p class="muted">Ou acesse e digite o código:</p>
+            <div class="code-badge" id="roomCode"></div>
+            <p class="muted join-url" id="joinUrl"></p>
+          </div>
+        </div>
+        <p style="margin-top: 16px">Jogadores conectados: <strong id="playerCount">0</strong></p>
+        <div id="playerList"></div>
+        <div class="row" style="margin-top: 16px">
+          <button id="startGame">Iniciar partida</button>
+        </div>
+      </section>
+
+      <!-- Pergunta / reveal -->
+      <section id="live" class="card hidden">
+        <div class="row">
+          <span class="pill" id="questionCounter"></span>
+          <div class="spacer"></div>
+          <span class="timer" id="hostTimer"></span>
+        </div>
+        <div class="question-text" id="hostQuestionText"></div>
+        <div class="options" id="hostOptions"></div>
+
+        <div id="revealBox" class="hidden">
+          <h3>Resultado</h3>
+          <div id="distribution"></div>
+          <h3>Ranking parcial</h3>
+          <ol class="rank-list" id="hostRanking"></ol>
+          <div class="row" style="margin-top: 16px">
+            <button id="nextQuestion">Próxima pergunta</button>
+            <button id="endGame" class="ghost">Encerrar e ver pódio</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pódio -->
+      <section id="podium" class="card hidden">
+        <h2 style="text-align: center">🏆 Pódio</h2>
+        <div class="podium" id="podiumBox"></div>
+        <h3>Classificação completa</h3>
+        <ol class="rank-list" id="fullRanking"></ol>
+        <div class="row" style="margin-top: 16px">
+          <button onclick="window.location.href = '/'">Voltar ao início</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/socket-client.js"></script>
+    <script src="/js/host.js"></script>
+  </body>
+</html>
