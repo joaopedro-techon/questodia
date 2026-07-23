@@ -17,15 +17,45 @@
     return date.toLocaleString('pt-BR');
   }
 
+  function showAlert(message, type) {
+    $('alert').innerHTML = `<div class="notice ${type}">${escapeHtml(message)}</div>`;
+  }
+
   async function loadQuizzes() {
     const res = await fetch('/api/quizzes');
     if (!res.ok) {
-      $('alert').innerHTML =
-        '<div class="notice error">Não foi possível carregar os quizzes.</div>';
+      showAlert('Não foi possível carregar os quizzes.', 'error');
       return;
     }
     const quizzes = await res.json();
     render(quizzes);
+  }
+
+  async function deleteQuiz(managementCode, title) {
+    const confirmed = window.confirm(
+      `Excluir o quiz "${title}"? Esta ação não pode ser desfeita.`
+    );
+    if (!confirmed) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/quizzes/${encodeURIComponent(managementCode)}`, {
+        method: 'DELETE',
+      });
+      if (res.status === 404) {
+        showAlert('Este quiz já não existe mais.', 'error');
+        await loadQuizzes();
+        return;
+      }
+      if (!res.ok) {
+        showAlert('Não foi possível excluir o quiz. Tente novamente.', 'error');
+        return;
+      }
+      showAlert(`Quiz "${title}" excluído com sucesso.`, 'ok');
+      await loadQuizzes();
+    } catch (err) {
+      showAlert('Erro de conexão ao excluir o quiz. Tente novamente.', 'error');
+    }
   }
 
   function render(quizzes) {
@@ -49,6 +79,7 @@
         </div>
         <button class="ghost small" data-edit="${quiz.managementCode}">Editar</button>
         <button class="small" data-launch="${quiz.managementCode}">Lançar</button>
+        <button class="danger small" data-delete="${quiz.managementCode}">Excluir</button>
       `;
       list.appendChild(item);
     });
@@ -61,6 +92,12 @@
     list.querySelectorAll('[data-launch]').forEach((btn) => {
       btn.addEventListener('click', () => {
         window.location.href = `/host.html?code=${encodeURIComponent(btn.dataset.launch)}&launch=1`;
+      });
+    });
+    list.querySelectorAll('[data-delete]').forEach((btn) => {
+      const quiz = quizzes.find((q) => q.managementCode === btn.dataset.delete);
+      btn.addEventListener('click', () => {
+        deleteQuiz(btn.dataset.delete, quiz ? quiz.title : '');
       });
     });
   }

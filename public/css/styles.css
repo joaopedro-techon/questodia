@@ -177,6 +177,16 @@ button.secondary {
   border: 1px solid #5a4f95;
 }
 
+button.danger {
+  background: rgba(255, 90, 95, 0.15);
+  border: 1px solid rgba(255, 90, 95, 0.55);
+  color: #ff8a8e;
+}
+
+button.danger:hover {
+  background: rgba(255, 90, 95, 0.25);
+}
+
 button.small {
   padding: 8px 12px;
   font-size: 0.85rem;
