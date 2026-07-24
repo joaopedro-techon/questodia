@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS quizzes (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
   management_code TEXT NOT NULL UNIQUE,
+  password_hash TEXT,
+  password_salt TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );

@@ -32,6 +32,20 @@
         <label for="quizTitle">Título do quiz</label>
         <input id="quizTitle" type="text" placeholder="Ex.: Capitais do Mundo" />
 
+        <div id="passwordGroup">
+          <label for="quizPassword">Senha de gestão</label>
+          <input
+            id="quizPassword"
+            type="password"
+            autocomplete="new-password"
+            placeholder="Crie uma senha (mín. 4 caracteres)"
+          />
+          <p class="muted">
+            Você precisará desta senha para ver os detalhes, editar ou excluir este quiz depois.
+            Guarde-a com cuidado — ela não pode ser recuperada.
+          </p>
+        </div>
+
         <div id="questions"></div>
 
         <div class="row" style="margin-top: 12px">

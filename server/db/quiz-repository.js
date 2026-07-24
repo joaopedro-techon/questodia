@@ -14,6 +14,39 @@ function generateManagementCode() {
   );
 }
 
+// Gera hash (scrypt) da senha de gestão com salt aleatório.
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return { hash, salt };
+}
+
+// Compara em tempo constante a senha informada com o hash armazenado.
+function passwordMatches(password, salt, hash) {
+  if (typeof password !== 'string' || !salt || !hash) {
+    return false;
+  }
+  const computed = crypto.scryptSync(password, salt, 64);
+  const stored = Buffer.from(hash, 'hex');
+  return computed.length === stored.length && crypto.timingSafeEqual(computed, stored);
+}
+
+// Verifica o acesso de gestão a um quiz.
+// Retorna 'not_found', 'ok' (sem senha ou senha correta) ou 'unauthorized'.
+function authorize(managementCode, password) {
+  const db = getDb();
+  const row = db
+    .prepare('SELECT password_hash, password_salt FROM quizzes WHERE management_code = ?')
+    .get(managementCode);
+  if (!row) {
+    return 'not_found';
+  }
+  if (!row.password_hash) {
+    return 'ok'; // quiz legado sem senha permanece acessível
+  }
+  return passwordMatches(password, row.password_salt, row.password_hash) ? 'ok' : 'unauthorized';
+}
+
 // Insere as perguntas e opções de um quiz já existente (dentro de uma transação).
 function insertQuestions(db, quizId, questions) {
   const insertQuestion = db.prepare(
@@ -32,17 +65,19 @@ function insertQuestions(db, quizId, questions) {
 }
 
 // Cria e persiste um novo quiz. Retorna dados essenciais + código de gestão.
-function createQuiz({ title, questions }) {
+function createQuiz({ title, questions, password }) {
   const db = getDb();
   const managementCode = generateManagementCode();
   const timestamp = nowIso();
+  const { hash, salt } = hashPassword(password);
 
   const tx = db.transaction(() => {
     const result = db
       .prepare(
-        'INSERT INTO quizzes (title, management_code, created_at, updated_at) VALUES (?, ?, ?, ?)'
+        `INSERT INTO quizzes (title, management_code, password_hash, password_salt, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?)`
       )
-      .run(title, managementCode, timestamp, timestamp);
+      .run(title, managementCode, hash, salt, timestamp, timestamp);
     const quizId = result.lastInsertRowid;
     insertQuestions(db, quizId, questions);
     return quizId;
@@ -139,6 +174,7 @@ function listQuizzes() {
 
 module.exports = {
   createQuiz,
+  authorize,
   getByManagementCode,
   updateByManagementCode,
   deleteByManagementCode,

@@ -38,10 +38,19 @@
     if (!confirmed) {
       return;
     }
+    const password = window.prompt(`Digite a senha de gestão do quiz "${title}" para excluí-lo:`);
+    if (password === null) {
+      return;
+    }
     try {
       const res = await fetch(`/api/quizzes/${encodeURIComponent(managementCode)}`, {
         method: 'DELETE',
+        headers: { 'x-quiz-password': password },
       });
+      if (res.status === 401) {
+        showAlert('Senha de gestão inválida. O quiz não foi excluído.', 'error');
+        return;
+      }
       if (res.status === 404) {
         showAlert('Este quiz já não existe mais.', 'error');
         await loadQuizzes();

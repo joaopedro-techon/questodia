@@ -15,6 +15,10 @@ const config = {
   managementCodePrefix: 'qz_', // código de gestão secreto do quiz
   managementCodeBytes: 8, // bytes aleatórios -> 16 chars hex
 
+  // Senha de gestão (proteger visualização/edição/exclusão do quiz)
+  minPasswordLength: 4,
+  maxPasswordLength: 128,
+
   // Pontuação
   basePoints: 1000, // pontos máximos por acerto instantâneo
   minCorrectFraction: 0.5, // piso garantido ao acertar (metade da base)

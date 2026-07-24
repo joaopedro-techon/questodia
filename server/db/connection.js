@@ -23,8 +23,23 @@ function getDb() {
 
   const schema = fs.readFileSync(config.schemaPath, 'utf8');
   db.exec(schema);
+  applyMigrations(db);
 
   return db;
+}
+
+// Migrações leves e idempotentes para bancos criados antes de uma coluna existir.
+function applyMigrations(db) {
+  const columns = db
+    .prepare('PRAGMA table_info(quizzes)')
+    .all()
+    .map((c) => c.name);
+  if (!columns.includes('password_hash')) {
+    db.exec('ALTER TABLE quizzes ADD COLUMN password_hash TEXT');
+  }
+  if (!columns.includes('password_salt')) {
+    db.exec('ALTER TABLE quizzes ADD COLUMN password_salt TEXT');
+  }
 }
 
 module.exports = { getDb };

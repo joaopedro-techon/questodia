@@ -5,6 +5,7 @@
 
   // --- Estado ------------------------------------------------------------
   let managementCode = new URLSearchParams(window.location.search).get('code') || null;
+  let quizPassword = null; // senha de gestão verificada (para editar/salvar)
   let roomCode = null;
   let currentOptions = []; // opções da pergunta ao vivo atual (para o reveal)
   let timerInterval = null;
@@ -163,13 +164,32 @@
   async function saveQuiz() {
     const payload = collectQuiz();
     const isUpdate = Boolean(managementCode);
+
+    if (!isUpdate) {
+      // Criando: o master escolhe a senha de gestão.
+      const chosen = $('quizPassword').value;
+      if (!chosen || chosen.length < 4) {
+        showAlert('Defina uma senha de gestão com pelo menos 4 caracteres.', 'error');
+        return;
+      }
+      payload.password = chosen;
+    }
+
     const url = isUpdate ? `/api/quizzes/${managementCode}` : '/api/quizzes';
     const method = isUpdate ? 'PUT' : 'POST';
+    const headers = { 'Content-Type': 'application/json' };
+    if (isUpdate && quizPassword) {
+      headers['x-quiz-password'] = quizPassword;
+    }
     const res = await fetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(payload),
     });
+    if (res.status === 401) {
+      showAlert('Senha de gestão inválida. Recarregue a página e informe a senha correta.', 'error');
+      return;
+    }
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       const details = (body.details || ['erro ao salvar']).join('<br>');
@@ -177,9 +197,20 @@
       return;
     }
     const body = await res.json();
+    if (!isUpdate) {
+      quizPassword = payload.password; // mantém a senha para futuros salvamentos
+    }
     managementCode = body.managementCode || managementCode;
+    hidePasswordField();
     showSavedInfo();
     showAlert('Quiz salvo com sucesso.', 'ok');
+  }
+
+  function hidePasswordField() {
+    const group = $('passwordGroup');
+    if (group) {
+      group.classList.add('hidden');
+    }
   }
 
   function showSavedInfo() {
@@ -189,14 +220,33 @@
     $('savedInfo').classList.remove('hidden');
   }
 
-  async function loadQuiz(code) {
-    const res = await fetch(`/api/quizzes/${code}`);
+  async function loadQuiz(code, password) {
+    const headers = {};
+    if (password) {
+      headers['x-quiz-password'] = password;
+    }
+    const res = await fetch(`/api/quizzes/${code}`, { headers });
+
+    if (res.status === 401) {
+      const entered = window.prompt('Este quiz é protegido. Digite a senha de gestão para editar:');
+      if (entered === null) {
+        // Cancelou: volta para a lista.
+        window.location.href = '/quizzes.html';
+        return;
+      }
+      await loadQuiz(code, entered);
+      return;
+    }
     if (!res.ok) {
       showAlert('Quiz não encontrado para este código de gestão.', 'error');
+      hidePasswordField();
       builderQuestions.push(newBlankQuestion());
       renderBuilder();
       return;
     }
+
+    quizPassword = password || null; // senha verificada, guardada para salvar
+    hidePasswordField();
     const quiz = await res.json();
     $('builderTitle').textContent = 'Editar quiz';
     $('quizTitle').value = quiz.title;
@@ -367,13 +417,15 @@
 
   // --- Início ------------------------------------------------------------
   const autoLaunch = new URLSearchParams(window.location.search).get('launch') === '1';
-  if (managementCode) {
-    loadQuiz(managementCode).then(() => {
-      if (autoLaunch) {
-        launchGame();
-      }
-    });
+  if (managementCode && autoLaunch) {
+    // Lançar não exige senha: inicia a partida sem carregar os detalhes.
+    hidePasswordField();
+    launchGame();
+  } else if (managementCode) {
+    // Editar/ver detalhes exige a senha (loadQuiz pede se necessário).
+    loadQuiz(managementCode);
   } else {
+    // Novo quiz: o campo de senha permanece visível para o master escolher.
     builderQuestions.push(newBlankQuestion());
     renderBuilder();
   }
