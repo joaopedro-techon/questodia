@@ -142,7 +142,10 @@
     }
   }
 
-  // --- Reveal ------------------------------------------------------------
+  // --- Reveal / Placar ---------------------------------------------------
+  // Guarda a posição de cada jogador no reveal anterior para mostrar subida/queda.
+  let previousRanks = {};
+
   function onReveal(payload) {
     stopCountdown();
     showSection('reveal');
@@ -156,20 +159,75 @@
       box.textContent = '❌ Não foi dessa vez';
     }
 
-    const mine = payload.ranking.find((r) => r.nickname === myNickname);
-    $('myRank').textContent = mine ? `${mine.rank}º` : '—';
-    $('myScore').textContent = mine ? mine.score : 0;
+    renderLeaderSpotlight($('leaderSpotlight'), payload.ranking);
     renderRankingList($('playRanking'), payload.ranking);
+    renderMyStanding($('myStanding'), payload.ranking);
+
+    // Atualiza o histórico de posições para o próximo reveal.
+    previousRanks = {};
+    payload.ranking.forEach((entry) => {
+      previousRanks[entry.nickname] = entry.rank;
+    });
+  }
+
+  // Destaque do líder (ou parabéns se for você).
+  function renderLeaderSpotlight(el, ranking) {
+    const leader = ranking[0];
+    if (!leader) {
+      el.innerHTML = '';
+      return;
+    }
+    const iAmLeader = leader.nickname === myNickname;
+    el.innerHTML = iAmLeader
+      ? `<span class="crown">👑</span><div><div class="leader-name">Você está na frente! 🎉</div><div class="leader-score">${leader.score} pts</div></div>`
+      : `<span class="crown">👑</span><div><div class="leader-name">${escapeHtml(leader.nickname)}</div><div class="leader-score">${leader.score} pts na liderança</div></div>`;
+  }
+
+  // Indicador de movimento de posição desde o reveal anterior.
+  function moveIndicator(nickname, rank) {
+    const before = previousRanks[nickname];
+    if (before === undefined) {
+      return '<span class="rank-move new">novo</span>';
+    }
+    if (rank < before) {
+      return `<span class="rank-move up">▲${before - rank}</span>`;
+    }
+    if (rank > before) {
+      return `<span class="rank-move down">▼${rank - before}</span>`;
+    }
+    return '<span class="rank-move same">–</span>';
   }
 
   function renderRankingList(listEl, ranking) {
     listEl.innerHTML = '';
+    const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
     ranking.forEach((entry) => {
       const li = document.createElement('li');
       const isMe = entry.nickname === myNickname;
-      li.innerHTML = `<span class="pos">${entry.rank}</span><span>${escapeHtml(entry.nickname)}${isMe ? ' (você)' : ''}</span><div class="spacer"></div><strong>${entry.score}</strong>`;
+      if (isMe) {
+        li.className = 'me';
+      }
+      const badge = medals[entry.rank] || entry.rank;
+      li.innerHTML = `<span class="pos">${badge}</span>${moveIndicator(entry.nickname, entry.rank)}<span class="rank-name">${escapeHtml(entry.nickname)}${isMe ? ' (você)' : ''}</span><div class="spacer"></div><strong>${entry.score}</strong>`;
       listEl.appendChild(li);
     });
+  }
+
+  function renderMyStanding(el, ranking) {
+    const mine = ranking.find((r) => r.nickname === myNickname);
+    if (!mine) {
+      el.textContent = '';
+      return;
+    }
+    const total = ranking.length;
+    let movement = '';
+    const before = previousRanks[mine.nickname];
+    if (before !== undefined && mine.rank < before) {
+      movement = ` — você subiu ${before - mine.rank} posição(ões)! 🔥`;
+    } else if (before !== undefined && mine.rank > before) {
+      movement = ` — você caiu ${mine.rank - before} posição(ões).`;
+    }
+    el.textContent = `Você está em ${mine.rank}º de ${total} · ${mine.score} pts${movement}`;
   }
 
   // --- Pódio -------------------------------------------------------------

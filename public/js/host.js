@@ -342,15 +342,50 @@
       distBox.appendChild(line);
     });
 
+    renderLeaderSpotlight($('hostLeaderSpotlight'), payload.ranking);
     renderRankingList($('hostRanking'), payload.ranking);
     $('revealBox').classList.remove('hidden');
+
+    // Atualiza o histórico de posições para o próximo reveal.
+    previousRanks = {};
+    payload.ranking.forEach((entry) => {
+      previousRanks[entry.nickname] = entry.rank;
+    });
+  }
+
+  // Guarda a posição de cada jogador no reveal anterior (para subida/queda).
+  let previousRanks = {};
+
+  function renderLeaderSpotlight(el, ranking) {
+    const leader = ranking[0];
+    if (!leader) {
+      el.innerHTML = '';
+      return;
+    }
+    el.innerHTML = `<span class="crown">👑</span><div><div class="leader-name">${escapeHtml(leader.nickname)}</div><div class="leader-score">${leader.score} pts na liderança</div></div>`;
+  }
+
+  function moveIndicator(nickname, rank) {
+    const before = previousRanks[nickname];
+    if (before === undefined) {
+      return '<span class="rank-move new">novo</span>';
+    }
+    if (rank < before) {
+      return `<span class="rank-move up">▲${before - rank}</span>`;
+    }
+    if (rank > before) {
+      return `<span class="rank-move down">▼${rank - before}</span>`;
+    }
+    return '<span class="rank-move same">–</span>';
   }
 
   function renderRankingList(listEl, ranking) {
     listEl.innerHTML = '';
+    const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
     ranking.forEach((entry) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span class="pos">${entry.rank}</span><span>${escapeHtml(entry.nickname)}</span><div class="spacer"></div><strong>${entry.score}</strong>`;
+      const badge = medals[entry.rank] || entry.rank;
+      li.innerHTML = `<span class="pos">${badge}</span>${moveIndicator(entry.nickname, entry.rank)}<span class="rank-name">${escapeHtml(entry.nickname)}</span><div class="spacer"></div><strong>${entry.score}</strong>`;
       listEl.appendChild(li);
     });
   }

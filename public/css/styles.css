@@ -330,9 +330,94 @@ button.small {
 
 .rank-list .pos {
   font-weight: 800;
-  width: 28px;
+  width: 34px;
   text-align: center;
   color: var(--accent-2);
+  font-size: 1.05rem;
+}
+
+.rank-list .rank-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Linha do próprio jogador em destaque */
+.rank-list li.me {
+  background: rgba(124, 92, 255, 0.22);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.25);
+}
+
+/* Placar entre perguntas ("quem está na frente") */
+.leaderboard {
+  margin-top: 8px;
+}
+
+.leaderboard-title {
+  text-align: center;
+  margin: 8px 0 12px;
+  font-size: 1.25rem;
+}
+
+.leader-spotlight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+  text-align: left;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 213, 74, 0.18), rgba(201, 151, 0, 0.12));
+  border: 1px solid rgba(255, 213, 74, 0.55);
+  box-shadow: 0 0 26px rgba(255, 213, 74, 0.2);
+  margin-bottom: 14px;
+}
+
+.leader-spotlight .crown {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.leader-spotlight .leader-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.leader-spotlight .leader-score {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Setas de subida/queda de posição */
+.rank-move {
+  min-width: 42px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.rank-move.up {
+  color: var(--good);
+}
+
+.rank-move.down {
+  color: var(--bad);
+}
+
+.rank-move.same {
+  color: var(--muted);
+}
+
+.rank-move.new {
+  color: var(--accent-2);
+  font-size: 0.72rem;
+}
+
+.my-standing {
+  text-align: center;
+  margin-top: 12px;
+  font-weight: 700;
+  color: var(--text);
 }
 
 .podium {

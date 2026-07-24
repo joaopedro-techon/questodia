@@ -53,14 +53,16 @@
         <p class="muted" id="answeredNote"></p>
       </section>
 
-      <!-- Reveal -->
+      <!-- Reveal / Placar -->
       <section id="reveal" class="card hidden">
         <div id="feedbackBox" class="feedback"></div>
-        <p style="text-align: center; margin-top: 16px">
-          Sua posição: <strong id="myRank"></strong> · Total: <strong id="myScore"></strong> pts
-        </p>
-        <h3>Ranking parcial</h3>
-        <ol class="rank-list" id="playRanking"></ol>
+
+        <div class="leaderboard">
+          <h3 class="leaderboard-title">🏆 Quem está na frente</h3>
+          <div id="leaderSpotlight" class="leader-spotlight"></div>
+          <ol class="rank-list" id="playRanking"></ol>
+          <p class="my-standing" id="myStanding"></p>
+        </div>
       </section>
 
       <!-- Pódio -->
